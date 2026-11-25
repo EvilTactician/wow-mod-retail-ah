@@ -1,4 +1,13 @@
-# Retail Auction House
+# Retail Auction House 1.18.1
+
+<div align="center">
+
+![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
+![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
+[![Version](https://img.shields.io/badge/Version-1.18.1-green)](https://github.com/EvilTactician/wow-mod-retail-ah)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+
+</div>
 
 An [AzerothCore](https://www.azerothcore.org/) (WotLK 3.3.5a) module and addon that replace the
 old auction window with the **retail** one: the Buy / Sell / Auctions window from modern WoW,
@@ -31,7 +40,7 @@ other modules keep working, because every auction is still an ordinary AzerothCo
   elsewhere in the game. `/rah compare` compares on every hover instead, and back.
 - **Favorites**: right-click a result, or click the star on an item. The window opens on your
   favorites. Favorites are account-wide.
-- **Shopping list** (with [mod-reagent-bank-account](https://github.com/buildthehomelab/mod-reagent-bank-account)'s
+- **Shopping list** (with [mod-reagent-bank-account](https://github.com/EvilTactician/mod-reagent-bank-account)'s
   ReagentBankUI): the note button beside the star lists what your recipes are short of, put
   there with **Add to Shopping List** in the profession window, each with what's left to buy,
   what you've bought, the cheapest price and how many are listed (red when the house can't cover
@@ -51,7 +60,7 @@ other modules keep working, because every auction is still an ordinary AzerothCo
   beside **Buy Now**; after each purchase the next cheapest is picked, so you can keep buying
   (Shift-click skips the confirmation).
 - The item view keeps a running **Purchased: N for X** total while you stay on the item.
-- **Transmog** (with [mod-transmog-plus](https://github.com/buildthehomelab/wow-mod-transmog-plus)):
+- **Transmog** (with [mod-transmog-plus](https://github.com/EvilTactician/wow-mod-transmog-plus)):
   gear whose look your account hasn't collected is tagged **new look** in the results and the
   item view, with "You haven't collected this appearance" in the tooltip, and the filters have
   **Uncollected appearances only**, like retail. A look counts as collected from any item that
@@ -65,7 +74,7 @@ other modules keep working, because every auction is still an ordinary AzerothCo
   bags and lists them as full stacks, so you never split stacks by hand.
   An optional **bid per unit** lists the stacks with a starting bid too; left empty they are
   buyout only, as retail lists commodities.
-- With [mod-reagent-bank-account](https://github.com/buildthehomelab/mod-reagent-bank-account),
+- With [mod-reagent-bank-account](https://github.com/EvilTactician/mod-reagent-bank-account),
   your **reagent bank** counts too: its contents show in the item list (a blue `+` on the count),
   and a post takes from your bags first and then the bank, like retail's reagent bank. The
   **Include reagent bank** checkbox above the item list turns that off, so the list and every
@@ -74,7 +83,7 @@ other modules keep working, because every auction is still an ordinary AzerothCo
   ones at once.
 - The price starts at the current lowest listing (click any listing to match it), the deposit
   is worked out by the server, and 12 / 24 / 48 hour durations.
-- **AH bot price** (with [mod-ah-bot-plus](https://github.com/NathanHandley/mod-ah-bot-plus)'s
+- **AH bot price** (with [mod-ah-bot-plus](https://github.com/EvilTactician/wow-mod-ah-bot-plus)'s
   buyer bot on): above the listings, **AH buyer pays: X** shows what the bot pays for the item,
   and the price box starts there: the most the bot pays every time it looks, so the post sells
   even when no player is around to buy it. Players can still buy it, and may pay more. If the
@@ -110,12 +119,13 @@ other modules keep working, because every auction is still an ordinary AzerothCo
 - Today, 7 days, 30 days or all time, for this character or **all characters** on the account,
   with sales, cut, lost deposits, purchases and the **net** along the bottom.
 
-**Craft for profit** (with [mod-retail-professions](https://github.com/buildthehomelab/wow-mod-retail-professions))
+**Craft for profit** (with [mod-retail-professions](https://github.com/EvilTactician/wow-mod-retail-professions))
 - The RetailProfessions addon's profit view asks this module for prices from the profession
   window, wherever the player is: the lowest buyout and units listed (their own auctions left
   out), what the AH bot buyer pays, vendor prices of reagents vendors sell, and how much sold in
   the last 14 days. It ranks the recipes a player knows by profit, with what they can craft right
-  now from their bags and reagent bank first. `RetailAH.CraftPrices = 0` turns it off.
+  now from their bags and reagent bank first. The era gate never hides the price of anything a
+  recipe the player knows makes or uses. `RetailAH.CraftPrices = 0` turns it off.
 
 **AH bot prices on item tooltips**
 - Every item tooltip, anywhere in the world, shows what the AH bot buyer pays for it (per unit,
@@ -146,7 +156,7 @@ an addon or a stale list can't reach a hidden auction.
   level cap (60 before TBC, 70 before WotLK), the level gate steps aside and the era decides
   alone. Otherwise a level 60 player would lose Nexus Crystals and raid recipes, whose item
   levels are past 62.
-- **Era** (with [mod-individual-progression](https://github.com/ZhengPeiRu21/mod-individual-progression)):
+- **Era** (with [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression)):
   items the player's progression hasn't unlocked are hidden. A character who hasn't cleared
   Molten Core sees no Blackwing Lair, Zul'Gurub, AQ, Naxxramas, Outland or Northrend items.
   Clear MC and the BWL-era items show up on the next search.
@@ -195,8 +205,9 @@ state from **where it can be obtained**, and takes the easiest source:
 2. **Derived sources, followed until they settle.** Container contents, disenchanting,
    prospecting and milling results, and items made by using another item (a full set of
    Darkmoon cards makes the deck). Quest rewards get the quest giver's state and the state of
-   the items the quest asks for. Crafted items get the easiest place to learn the recipe
-   (trainer, recipe item or quest), the state of their reagents, and a **skill tier**: a craft
+   the items the quest asks for. Crafted items get the easiest way to learn the recipe (a
+   recipe item or quest; a trainer teaches from the start, wherever it stands), the state of
+   their reagents, and a **skill tier**: a craft
    that needs more than 300 skill (vanilla's cap) is TBC, and more than 375 is WotLK. Enchant
    scrolls (an enchant cast on vellum) and random craft results count as crafts. Crafts learned
    by research or discovery only date items that nothing else gives.
@@ -209,7 +220,8 @@ state from **where it can be obtained**, and takes the easiest source:
    of the above. Rows in mod-ah-progression's old `mod_ah_progression_item` are read too. The
    module also carries a short built-in list for AzerothCore loot data that puts later items in
    old-world tables (Knothide Leather on an Alterac Valley creature, Outland potions in level 60
-   pickpocket loot, Outland fish in Deadwind Pass); a table row still wins over it. Crafts and
+   pickpocket loot, Outland fish in Deadwind Pass, vials in Dalaran's sewer fishing); a table
+   row still wins over it. Crafts and
    container contents follow an override, unless their own floor is higher.
 
 Professions are gated by tier, not by profession: jewelcrafting, inscription, prospecting and
@@ -278,8 +290,8 @@ On the server:
   pays every time) and at its high end (its best roll), times
   `AuctionHouseBot.Buyer.AcceptablePriceModifier`. The buyer buys out when the buyout is below
   what it's willing to pay, so the price shown is one copper under that. The formula is mirrored
-  from mod-ah-bot-plus; with buildthehomelab's fork of it
-  ([wow-mod-ah-bot-plus](https://github.com/buildthehomelab/wow-mod-ah-bot-plus), which ships
+  from mod-ah-bot-plus; with the fork of it
+  ([wow-mod-ah-bot-plus](https://github.com/EvilTactician/wow-mod-ah-bot-plus), which ships
   `AuctionHouseBotPriceCatalog.h`), the module uses the bot's own buyer offers instead.
 - **The ledger** comes from the core's auction mail hooks (sale, purchase, expiry), which every
   way of ending an auction goes through: the stock window, this module, the AH bot's buyer and
@@ -301,14 +313,14 @@ On the server:
 - The bundled **RetailAH** addon (`addon/RetailAH`) on each player's WoW 3.3.5a (12340) client.
   Without the module on the server, the addon falls back to the classic auction window.
 - Optional, each switches on one part of the window:
-  - [mod-individual-progression](https://github.com/ZhengPeiRu21/mod-individual-progression):
+  - [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression):
     the era gate.
-  - [mod-transmog-plus](https://github.com/buildthehomelab/wow-mod-transmog-plus): uncollected
+  - [mod-transmog-plus](https://github.com/EvilTactician/wow-mod-transmog-plus): uncollected
     appearance tags and filter.
-  - [mod-reagent-bank-account](https://github.com/buildthehomelab/mod-reagent-bank-account):
+  - [mod-reagent-bank-account](https://github.com/EvilTactician/mod-reagent-bank-account):
     posting from the reagent bank.
-  - [mod-ah-bot-plus](https://github.com/NathanHandley/mod-ah-bot-plus): AH bot prices.
-  - [mod-retail-professions](https://github.com/buildthehomelab/wow-mod-retail-professions):
+  - [mod-ah-bot-plus](https://github.com/EvilTactician/wow-mod-ah-bot-plus): AH bot prices.
+  - [mod-retail-professions](https://github.com/EvilTactician/wow-mod-retail-professions):
     craft-for-profit prices.
   - [DragonUI](https://github.com/NeticSoul/DragonUI): the window wears its skin.
 - Remove **mod-ah-progression** if it is installed; this module replaces it.
@@ -319,7 +331,7 @@ On the server:
 
 ```
 cd azerothcore/modules
-git clone https://github.com/buildthehomelab/wow-mod-retail-ah.git mod-retail-ah
+git clone https://github.com/EvilTactician/wow-mod-retail-ah.git mod-retail-ah
 ```
 
 The folder must be named `mod-retail-ah`: AzerothCore derives the loader name from it. Re-run
@@ -411,8 +423,8 @@ GM commands on the server:
 
 ## Where the AH bot's prices come from
 
-With buildthehomelab's fork of mod-ah-bot-plus
-([wow-mod-ah-bot-plus](https://github.com/buildthehomelab/wow-mod-ah-bot-plus), which ships
+With the fork of mod-ah-bot-plus
+([wow-mod-ah-bot-plus](https://github.com/EvilTactician/wow-mod-ah-bot-plus), which ships
 `AuctionHouseBotPriceCatalog.h`, found on the include path or in a sibling
 `modules/mod-ah-bot-plus` folder), the AH buyer's offers and the bot's seller references (the
 craft-for-profit prices, with `AuctionHouseBot.Seller.StablePrices` on) come from its shared
@@ -427,7 +439,7 @@ prices fall back to the live market. The craft-price wire protocol is documented
 The AH bot price formula mirrors the one in
 [mod-ah-bot-plus](https://github.com/NathanHandley/mod-ah-bot-plus) by NathanHandley.
 
-Author: [buildthehomelab](https://github.com/buildthehomelab)
+Original author: [buildthehomelab](https://github.com/buildthehomelab)
 
 ## License
 

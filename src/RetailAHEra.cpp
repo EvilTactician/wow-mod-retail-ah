@@ -14,8 +14,9 @@
  *      Vendors only count for items nothing else gives (see the vendor block below).
  *   2. Derived sources, iterated until stable: container contents, prospecting / milling /
  *      disenchanting results, items made by using another item (Darkmoon decks), quest rewards
- *      (gated by the quest giver and the items it asks for) and crafted items (gated by where the
- *      recipe is learned and by the reagents). Crafts include enchant scrolls (an enchant cast on
+ *      (gated by the quest giver and the items it asks for) and crafted items (gated by the
+ *      recipe item or quest that teaches them, the skill tier and the reagents; where a trainer
+ *      stands doesn't count, see below). Crafts include enchant scrolls (an enchant cast on
  *      vellum) and random results (spell_loot_template). A craft no trainer, recipe or quest
  *      teaches (research and discoveries) still counts, through its skill rank and reagents, but
  *      only for items with no other source.
@@ -31,7 +32,8 @@
  *
  * Professions are gated by skill tier, not by profession: jewelcrafting, inscription,
  * prospecting and milling all work from the start, but a craft needing more than 300 skill
- * (vanilla's cap) is TBC and more than 375 is WotLK.
+ * (vanilla's cap) is TBC and more than 375 is WotLK. So a trainer teaches from the start wherever
+ * it stands: jewelcrafting's trainers are in Silvermoon, the Exodar and Shattrath.
  *
  * Items with no known source and no floor stay visible: when unsure, show it.
  *
@@ -284,6 +286,15 @@ namespace RetailAH::Era
             { 27422, STATE_PRE_TBC },   // Barbed Gill Trout
             { 33823, STATE_ZUL_AMAN },  // Bloodfin Catfish
             { 33824, STATE_ZUL_AMAN },  // Crescent-Tail Skullfish
+            // Old-world vendors sell vials, but Dalaran's sewer fishing (area 4560) lists them too,
+            // and vendors only count for items nothing else gives.
+            { 3371, STATE_START },      // Empty Vial
+            { 3372, STATE_START },      // Leaded Vial
+            { 8925, STATE_START },      // Crystal Vial
+            { 18256, STATE_START },     // Imbued Vial (Major Rejuvenation Potion)
+            // Vendor goods whose only other sources are a later expansion's.
+            { 2390, STATE_START },      // Rusted Chain Bracers: also drops in Bloodmyst Isle
+            { 29450, STATE_PRE_TBC },   // Telaari Grapes: Outland vendors; Northrend pickpocketing
         };
 
         uint8 SkillTierFloor(uint32 skillRank)
@@ -719,14 +730,14 @@ namespace RetailAH::Era
                     itr->second = rank;
             };
 
-            // Trainers, by where the trainer stands.
+            // Trainers, spawned anywhere: professions are gated by skill tier, not by where their
+            // trainer stands (jewelcrafting's are all in TBC cities).
             {
                 auto addTrainerSpell = [&](uint32 creature, uint32 spell, uint32 rank)
                 {
                     offerRank(spell, rank);
-                    auto itr = creatureState.find(creature);
-                    if (itr != creatureState.end())
-                        offerSpawn(spellLearnState, spell, itr->second);
+                    if (creatureState.count(creature))
+                        offerSpawn(spellLearnState, spell, STATE_START);
                 };
 
                 if (TableExists("creature_default_trainer") && TableExists("trainer_spell"))
