@@ -292,6 +292,9 @@ namespace RetailAH::Era
             { 3372, STATE_START },      // Leaded Vial
             { 8925, STATE_START },      // Crystal Vial
             { 18256, STATE_START },     // Imbued Vial (Major Rejuvenation Potion)
+            // Vendor goods whose only other sources are a later expansion's.
+            { 2390, STATE_START },      // Rusted Chain Bracers: also drops in Bloodmyst Isle
+            { 29450, STATE_PRE_TBC },   // Telaari Grapes: Outland vendors; Northrend pickpocketing
         };
 
         uint8 SkillTierFloor(uint32 skillRank)
