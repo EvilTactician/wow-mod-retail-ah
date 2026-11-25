@@ -26,12 +26,13 @@
  * - flags 8: authoritative reference buyer policy (BiS items, or every quoted item with the bot's
  *   Buyer.ReferencePricing); craft profits should use bot pays, not reference.
  * - flags 1: the era gate hides the item from this player and they own none, so no auction
- *   prices. The level gate doesn't apply: a crafter prices what they make, whatever level it
- *   needs. flags 2: it binds when picked up (or is a quest item), so it can't be auctioned.
+ *   prices. Never for what a profession recipe they know makes or uses. The level gate doesn't
+ *   apply: a crafter prices what they make, whatever level it needs. flags 2: it binds when picked up (or is a quest item), so it can't be auctioned.
  */
 
 #include "RetailAH.h"
 #include "AuctionHouseMgr.h"
+#include "DBCStores.h"
 #include "DatabaseEnv.h"
 #include "GameTime.h"
 #include "Log.h"
@@ -39,6 +40,8 @@
 #include "Player.h"
 #include "World.h"
 #include "Config.h"
+#include "SpellInfo.h"
+#include "SpellMgr.h"
 #if __has_include("AuctionHouseBotPriceCatalog.h")
 #include "AuctionHouseBotPriceCatalog.h"
 #define RETAIL_AH_SHARED_BOT_CATALOG 1
@@ -77,6 +80,53 @@ namespace RetailAH::CraftPrices
         // Items a vendor sells without a stock limit or an extended cost.
         std::unordered_set<uint32> sVendorItems;
 
+        // Item -> the profession spells that make it or use it as a reagent: a crafter always
+        // gets the prices of their own recipes, whatever the era gate says.
+        std::unordered_map<uint32, std::vector<uint32>> sCraftSpells;
+
+        bool Crafts(Player* player, uint32 entry)
+        {
+            auto itr = sCraftSpells.find(entry);
+            if (itr == sCraftSpells.end())
+                return false;
+            for (uint32 spell : itr->second)
+                if (player->HasSpell(spell))
+                    return true;
+            return false;
+        }
+
+        void LoadCraftSpells()
+        {
+            sCraftSpells.clear();
+            for (uint32 spellId = 1; spellId < sSpellMgr->GetSpellInfoStoreSize(); ++spellId)
+            {
+                SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId);
+                if (!spellInfo)
+                    continue;
+                bool profession = false;
+                SkillLineAbilityMapBounds bounds = sSpellMgr->GetSkillLineAbilityMapBounds(spellId);
+                for (auto itr = bounds.first; itr != bounds.second && !profession; ++itr)
+                {
+                    SkillLineEntry const* skillLine = sSkillLineStore.LookupEntry(itr->second->SkillLine);
+                    profession = skillLine && (skillLine->categoryId == SKILL_CATEGORY_PROFESSION
+                        || skillLine->categoryId == SKILL_CATEGORY_SECONDARY);
+                }
+                if (!profession)
+                    continue;
+                std::unordered_set<uint32> items;
+                for (SpellEffectInfo const& effect : spellInfo->GetEffects())
+                    if ((effect.Effect == SPELL_EFFECT_CREATE_ITEM || effect.Effect == SPELL_EFFECT_CREATE_ITEM_2) && effect.ItemType)
+                        items.insert(effect.ItemType);
+                if (items.empty())
+                    continue;
+                for (uint8 i = 0; i < MAX_SPELL_REAGENTS; ++i)
+                    if (spellInfo->Reagent[i] > 0)
+                        items.insert(uint32(spellInfo->Reagent[i]));
+                for (uint32 item : items)
+                    sCraftSpells[item].push_back(spellId);
+            }
+        }
+
         uint32 Now()
         {
             return uint32(GameTime::GetGameTime().count());
@@ -97,6 +147,7 @@ namespace RetailAH::CraftPrices
 
     void Load()
     {
+        LoadCraftSpells();
         sVendorItems.clear();
         if (QueryResult result = WorldDatabase.Query("SELECT DISTINCT item FROM npc_vendor WHERE item > 0 AND maxcount = 0 AND ExtendedCost = 0"))
         {
@@ -189,7 +240,7 @@ namespace RetailAH::CraftPrices
                 continue;
             Price& price = prices[entry];
             price.proto = proto;
-            price.locked = view.Check(proto).era && !view.Owns(entry);
+            price.locked = view.Check(proto).era && !view.Owns(entry) && !Crafts(player, entry);
             order.push_back(entry);
         }
 

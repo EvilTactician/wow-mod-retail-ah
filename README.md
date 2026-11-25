@@ -115,7 +115,8 @@ other modules keep working, because every auction is still an ordinary AzerothCo
   window, wherever the player is: the lowest buyout and units listed (their own auctions left
   out), what the AH bot buyer pays, vendor prices of reagents vendors sell, and how much sold in
   the last 14 days. It ranks the recipes a player knows by profit, with what they can craft right
-  now from their bags and reagent bank first. `RetailAH.CraftPrices = 0` turns it off.
+  now from their bags and reagent bank first. The era gate never hides the price of anything a
+  recipe the player knows makes or uses. `RetailAH.CraftPrices = 0` turns it off.
 
 **AH bot prices on item tooltips**
 - Every item tooltip, anywhere in the world, shows what the AH bot buyer pays for it (per unit,
@@ -195,8 +196,9 @@ state from **where it can be obtained**, and takes the easiest source:
 2. **Derived sources, followed until they settle.** Container contents, disenchanting,
    prospecting and milling results, and items made by using another item (a full set of
    Darkmoon cards makes the deck). Quest rewards get the quest giver's state and the state of
-   the items the quest asks for. Crafted items get the easiest place to learn the recipe
-   (trainer, recipe item or quest), the state of their reagents, and a **skill tier**: a craft
+   the items the quest asks for. Crafted items get the easiest way to learn the recipe (a
+   recipe item or quest; a trainer teaches from the start, wherever it stands), the state of
+   their reagents, and a **skill tier**: a craft
    that needs more than 300 skill (vanilla's cap) is TBC, and more than 375 is WotLK. Enchant
    scrolls (an enchant cast on vellum) and random craft results count as crafts. Crafts learned
    by research or discovery only date items that nothing else gives.
@@ -209,7 +211,8 @@ state from **where it can be obtained**, and takes the easiest source:
    of the above. Rows in mod-ah-progression's old `mod_ah_progression_item` are read too. The
    module also carries a short built-in list for AzerothCore loot data that puts later items in
    old-world tables (Knothide Leather on an Alterac Valley creature, Outland potions in level 60
-   pickpocket loot, Outland fish in Deadwind Pass); a table row still wins over it. Crafts and
+   pickpocket loot, Outland fish in Deadwind Pass, vials in Dalaran's sewer fishing); a table
+   row still wins over it. Crafts and
    container contents follow an override, unless their own floor is higher.
 
 Professions are gated by tier, not by profession: jewelcrafting, inscription, prospecting and
