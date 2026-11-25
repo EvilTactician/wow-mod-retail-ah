@@ -18,8 +18,8 @@
  *   the answer is what they compete with. 0 when nothing is listed.
  * - AH bot pays: what mod-ah-bot-plus's buyer takes on every look (RetailAHBot.cpp), 0 when it
  *   doesn't buy the item or isn't running.
- * - Vendor price: what a vendor sells it for, when one sells it without limit or tokens (thread,
- *   vials, flux); 0 otherwise. Vendor pays: what a vendor gives for one.
+ * - Vendor price: what a vendor sells one for (per unit, for batches like 5 Simple Flour), when
+ *   one sells it without limit or tokens (thread, vials, flux); 0 otherwise. Vendor pays: what a vendor gives for one.
  * - Traded: every auction of the item that sold in the last HISTORY_DAYS days, to anyone, read
  *   from the gold ledger at startup and kept up in memory since. Without the ledger only what
  *   sold since startup.
@@ -270,7 +270,9 @@ namespace RetailAH::CraftPrices
             ItemTemplate const* proto = price.proto;
             uint32 flags = (price.locked ? ROW_LOCKED : 0)
                 | (proto->Bonding == BIND_WHEN_PICKED_UP || proto->Bonding == BIND_QUEST_ITEM ? ROW_SOULBOUND : 0);
-            uint32 vendor = sVendorItems.count(entry) ? proto->BuyPrice : 0;
+            // Per unit: some vendors sell in batches (5 Simple Flour for 25c).
+            uint32 vendor = sVendorItems.count(entry) && proto->BuyPrice
+                ? (proto->BuyPrice + std::max<uint32>(1, proto->BuyCount) - 1) / std::max<uint32>(1, proto->BuyCount) : 0;
 
             uint64 botAlways = 0, botUpTo = 0;
             uint64 tradedUnits = 0, tradedCopper = 0;
